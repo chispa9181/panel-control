@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terminal Personal • Thiago Belmonte</title>
+  <style>
+    :root {
+      --bg: #060911;
+      --card-bg: linear-gradient(145deg, #0e1726, #090e17);
+      --card-border: #1e293b;
+      --blue: #3b82f6;
+      --blue-glow: rgba(59, 130, 246, 0.25);
+      --emerald: #10b981;
+      --emerald-glow: rgba(16, 185, 129, 0.25);
+      --red: #ef4444;
+      --amber: #f59e0b;
+      --purple: #a855f7;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; transition: all 0.2s ease; }
+    body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; justify-content: center; padding: 25px 15px; }
+    .container { width: 100%; max-width: 920px; }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 22px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+    .glow-blue { border-color: rgba(59, 130, 246, 0.4); box-shadow: 0 0 25px var(--blue-glow); }
+    .glow-emerald { border-color: rgba(16, 185, 129, 0.4); box-shadow: 0 0 25px var(--emerald-glow); }
+
+    .header { display: flex; justify-content: space-between; align-items: center; }
+    .title { font-size: 20px; font-weight: 900; color: #ffffff; letter-spacing: 0.5px; }
+    .subtitle { font-size: 12px; color: var(--text-muted); margin-top: 3px; font-weight: 500; }
+
+    .nav-tabs { display: flex; gap: 10px; border-bottom: 1px solid var(--card-border); margin-bottom: 20px; padding-bottom: 12px; }
+    .nav-btn {
+      flex: 1;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 12px 18px;
+      font-weight: 800;
+      font-size: 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .nav-btn:hover { color: #ffffff; border-color: #475569; transform: translateY(-2px); }
+    .nav-btn.active { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #ffffff; border-color: var(--blue); box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); }
+
+    .sub-tabs { display: flex; gap: 8px; margin-bottom: 18px; }
+    .sub-btn {
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .sub-btn:hover { color: white; border-color: #475569; }
+    .sub-btn.active { background: #1e293b; color: white; border-color: var(--blue); }
+
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; text-align: center; margin: 18px 0; }
+    
+    .stat-box {
+      background: rgba(6, 9, 17, 0.7);
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      border-left: 4px solid var(--blue);
+    }
+    .stat-green { border-left-color: var(--emerald); }
+    .stat-amber { border-left-color: var(--amber); }
+    .stat-purple { border-left-color: var(--purple); }
+    .stat-label { font-size: 10px; color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-val { font-size: 22px; font-weight: 900; margin-top: 6px; font-family: monospace; color: #ffffff; }
+
+    .btn {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.35);
+    }
+    .btn:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5); }
+    .btn-stop { background: linear-gradient(135deg, #dc2626, #b91c1c); box-shadow: 0 4px 15px rgba(220, 38, 38, 0.35); }
+    .btn-stop:hover { box-shadow: 0 6px 20px rgba(220, 38, 38, 0.5); }
+    .btn-success { background: linear-gradient(135deg, #059669, #047857); box-shadow: 0 4px 15px rgba(5, 150, 105, 0.35); }
+    .btn-subtle { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); color: #ffffff; padding: 9px 16px; font-size: 12px; font-weight: 700; border-radius: 8px; cursor: pointer; }
+    .btn-subtle:hover { background: rgba(255, 255, 255, 0.1); border-color: #475569; }
+
+    input, select, textarea {
+      width: 100%;
+      background: #060911;
+      border: 1px solid var(--card-border);
+      color: white;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 6px;
+      font-size: 13px;
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--blue); box-shadow: 0 0 12px var(--blue-glow); }
+
+    .badge { display: inline-block; padding: 5px 14px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; background: rgba(148, 163, 184, 0.1); color: var(--text-muted); border: 1px solid var(--card-border); }
+    .badge-on { background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.4); box-shadow: 0 0 15px var(--emerald-glow); }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; text-align: left; }
+    th, td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    th { color: var(--text-muted); font-size: 10px; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid var(--card-border); }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="card glow-blue">
+    <div class="header">
+      <div>
+        <div class="title">TERMINAL PERSONAL DE CONTROL ⚡</div>
+        <div class="subtitle">Usuario: Thiago Belmonte | Control Policial & Economía Civil</div>
+      </div>
+      <div style="text-align: right;">
+        <div id="clock" style="font-family: monospace; font-size: 18px; font-weight: bold; color: var(--blue);">00:00:00</div>
+        <div class="subtitle" style="font-size: 10px;">HORA LOCAL</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVEGACIÓN PRINCIPAL -->
+  <div class="nav-tabs">
+    <button id="nav-police" class="nav-btn active" onclick="showMainSection('police')">🚔 Apartado Policial</button>
+    <button id="nav-civil" class="nav-btn" onclick="showMainSection('civil')">💼 Apartado Civil</button>
+    <button id="nav-settings" class="nav-btn" onclick="showMainSection('settings')">⚙️ Ajustes</button>
+  </div>
+
+  <!-- APARTADO POLICIAL -->
+  <div id="sec-police">
+    <div class="sub-tabs">
+      <button id="sub-patrol" class="sub-btn active" onclick="showPoliceSub('patrol')">Turno Activo</button>
+      <button id="sub-history" class="sub-btn" onclick="showPoliceSub('history')">Historial Semanal</button>
+    </div>
+
+    <div id="view-patrol">
+      <div class="grid-4">
+        <div class="stat-box">
+          <div class="stat-label">HORAS ESTA SEMANA</div>
+          <div id="st-week-time" class="stat-val">0h 0m</div>
+        </div>
+        <div class="stat-box stat-green">
+          <div class="stat-label">GANADO ESTA SEMANA</div>
+          <div id="st-week-money" class="stat-val" style="color:#34d399;">$0</div>
+        </div>
+        <div class="stat-box stat-amber">
+          <div class="stat-label">MEDIA / TURNO</div>
+          <div id="st-avg-session" class="stat-val" style="color:#f59e0b;">0h 0m</div>
+        </div>
+        <div class="stat-box stat-purple">
+          <div class="stat-label">MEDIA / SEMANA</div>
+          <div id="st-avg-weekly" class="stat-val" style="color:#c084fc;">0h 0m</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="header" style="margin-bottom: 12px;">
+          <div class="title" style="font-size: 16px;">Control del Servicio Policial</div>
+          <span id="status-badge" class="badge">Fuera de Servicio</span>
+        </div>
+
+        <div class="grid-3">
+          <div style="background:#060911; padding:16px; border-radius:10px; border:1px solid var(--card-border);">
+            <div class="stat-label">Tiempo Transcurrido</div>
+            <div id="timer-display" class="stat-val" style="font-size:26px;">00:00:00</div>
+          </div>
+          <div style="background:#060911; padding:16px; border-radius:10px; border:1px solid var(--card-border);">
+            <div class="stat-label">Pagas Recibidas (:05 / :35)</div>
+            <div id="pay-display" class="stat-val" style="font-size:26px; color:#60a5fa;">0</div>
+          </div>
+          <div style="background:#060911; padding:16px; border-radius:10px; border:1px solid var(--card-border);">
+            <div class="stat-label">Dinero Acumulado</div>
+            <div id="money-display" class="stat-val" style="font-size:26px; color:#34d399;">$0</div>
+          </div>
+        </div>
+
+        <label class="stat-label" style="display:block; margin-top:16px;">Novedades / Incidencias del Servicio (Opcional):</label>
+        <textarea id="incidents-input" rows="2" placeholder="Escribe aquí si ocurrió algo relevante durante la patrulla..."></textarea>
+
+        <button id="btn-toggle-patrol" class="btn" style="margin-top:16px;" onclick="togglePatrol()">▶ Iniciar Servicio</button>
+      </div>
+    </div>
+
+    <div id="view-history" class="hidden">
+      <div class="card">
+        <div class="header" style="margin-bottom:15px;">
+          <div class="title" style="font-size: 16px;">Historial de Servicios Policiales</div>
+          <button class="btn-subtle" style="color:#f87171;" onclick="clearPoliceHistory()">Borrar Historial</button>
+        </div>
+        <div id="history-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- APARTADO CIVIL -->
+  <div id="sec-civil" class="hidden">
+    <div class="card glow-emerald">
+      <div class="header">
+        <div>
+          <div class="title" style="color:#34d399;">Saldo Total Acumulado</div>
+          <div class="subtitle">Sincronizado automáticamente con la Nube</div>
+        </div>
+        <div id="civil-balance" style="font-size: 34px; font-weight: 900; font-family: monospace; color: #34d399;">$0</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="title" style="font-size: 15px; margin-bottom: 12px;">Registrar Movimiento Económico</div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px;">
+        <div>
+          <label class="stat-label">Tipo</label>
+          <select id="civil-type">
+            <option value="ingreso">🟢 Ingreso (+)</option>
+            <option value="gasto">🔴 Gasto (-)</option>
+          </select>
+        </div>
+        <div>
+          <label class="stat-label">Cantidad ($)</label>
+          <input type="number" id="civil-amount" placeholder="Ej: 5000">
+        </div>
+        <div style="grid-column: span 2;">
+          <label class="stat-label">Concepto / Descripción</label>
+          <input type="text" id="civil-desc" placeholder="Ej: Venta de coche, Tuning de moto, Compra...">
+        </div>
+      </div>
+      <button class="btn btn-success" style="margin-top: 16px;" onclick="addCivilMovement()">+ Guardar Movimiento</button>
+    </div>
+
+    <div class="card">
+      <div class="header" style="margin-bottom: 10px;">
+        <div class="title" style="font-size: 15px;">Historial de Movimientos Civiles</div>
+        <button class="btn-subtle" style="color:#f87171;" onclick="clearCivilHistory()">Limpiar Movimientos</button>
+      </div>
+      <table id="civil-table">
+        <thead>
+          <tr><th>Fecha</th><th>Concepto</th><th>Tipo</th><th style="text-align:right;">Monto</th></tr>
+        </thead>
+        <tbody id="civil-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- AJUSTES -->
+  <div id="sec-settings" class="hidden">
+    <div class="card">
+      <div class="title" style="font-size: 15px; margin-bottom: 4px;">Webhook Policial (Discord)</div>
+      <div class="subtitle" style="margin-bottom: 10px;">Canal donde se envían los partes de finalización de patrulla.</div>
+      <input type="url" id="webhook-police" placeholder="https://discord.com/api/webhooks/...">
+      <button class="btn-subtle" style="margin-top: 10px; width: 100%;" onclick="saveWebhook('police')">Guardar Webhook Policial</button>
+    </div>
+
+    <div class="card">
+      <div class="title" style="font-size: 15px; margin-bottom: 4px;">Webhook Civil (Movimientos Civiles)</div>
+      <div class="subtitle" style="margin-bottom: 10px;">Canal donde se envían las fichas de cada gasto o ingreso.</div>
+      <input type="url" id="webhook-civil" placeholder="https://discord.com/api/webhooks/...">
+      <button class="btn-subtle" style="margin-top: 10px; width: 100%;" onclick="saveWebhook('civil')">Guardar Webhook Civil</button>
+    </div>
+
+    <div class="card">
+      <div class="title" style="font-size: 15px; margin-bottom: 4px;">URL App Google Script (Sincronización en la Nube)</div>
+      <div class="subtitle" style="margin-bottom: 10px;">Pega aquí la URL que obtuviste al implantar la aplicación web en Google.</div>
+      <input type="url" id="google-script-url" placeholder="https://script.google.com/macros/s/.../exec">
+      <button class="btn-subtle" style="margin-top: 10px; width: 100%;" onclick="saveGoogleUrl()">Guardar URL de Google Apps Script</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let session = JSON.parse(localStorage.getItem('chispa_session')) || null;
+  let policeHistory = JSON.parse(localStorage.getItem('chispa_p_history')) || [];
+  let civilHistory = JSON.parse(localStorage.getItem('chispa_c_history')) || [];
+  let policeWebhook = localStorage.getItem('chispa_p_webhook') || 'https://discord.com/api/webhooks/1550593754262540431/1TC3T9f9NGoOb8hqQD9VlmQWGoluDcpPf9deq60WTlUd_T8n0OD6I6W2tTx3UkFj4PaD';
+  let civilWebhook = localStorage.getItem('chispa_c_webhook') || 'https://discord.com/api/webhooks/1550593754262540431/1TC3T9f9NGoOb8hqQD9VlmQWGoluDcpPf9deq60WTlUd_T8n0OD6I6W2tTx3UkFj4PaD';
+  let googleScriptUrl = localStorage.getItem('chispa_g_script') || '';
+
+  window.onload = function() {
+    document.getElementById('webhook-police').value = policeWebhook;
+    document.getElementById('webhook-civil').value = civilWebhook;
+    document.getElementById('google-script-url').value = googleScriptUrl;
+    renderUI();
+  };
+
+  setInterval(() => {
+    document.getElementById('clock').innerText = new Date().toLocaleTimeString();
+    if (session) updateTimer();
+  }, 1000);
+
+  function showMainSection(sec) {
+    document.getElementById('nav-police').className = sec === 'police' ? 'nav-btn active' : 'nav-btn';
+    document.getElementById('nav-civil').className = sec === 'civil' ? 'nav-btn active' : 'nav-btn';
+    document.getElementById('nav-settings').className = sec === 'settings' ? 'nav-btn active' : 'nav-btn';
+
+    document.getElementById('sec-police').className = sec === 'police' ? '' : 'hidden';
+    document.getElementById('sec-civil').className = sec === 'civil' ? '' : 'hidden';
+    document.getElementById('sec-settings').className = sec === 'settings' ? '' : 'hidden';
+
+    if (sec === 'civil') renderCivilUI();
+  }
+
+  function showPoliceSub(tab) {
+    document.getElementById('sub-patrol').className = tab === 'patrol' ? 'sub-btn active' : 'sub-btn';
+    document.getElementById('sub-history').className = tab === 'history' ? 'sub-btn active' : 'sub-btn';
+
+    document.getElementById('view-patrol').className = tab === 'patrol' ? '' : 'hidden';
+    document.getElementById('view-history').className = tab === 'history' ? '' : 'hidden';
+
+    if (tab === 'history') renderPoliceHistory();
+  }
+
+  function calculatePay(start, end) {
+    let count = 0;
+    let curr = new Date(start);
+    curr.setSeconds(0, 0);
+    while (curr <= end) {
+      let m = curr.getMinutes();
+      if ((m === 5 || m === 35) && curr >= start && curr <= end) count++;
+      curr.setMinutes(curr.getMinutes() + 1);
+    }
+    return { count, money: count * 750 };
+  }
+
+  function togglePatrol() {
+    let now = new Date();
+    if (!session) {
+      session = { start: now.toISOString() };
+      localStorage.setItem('chispa_session', JSON.stringify(session));
+    } else {
+      let start = new Date(session.start);
+      let { count, money } = calculatePay(start, now);
+      let min = Math.round((now - start) / 60000);
+      let inc = document.getElementById('incidents-input').value.trim() || "Sin incidencias.";
+
+      let rec = { start: session.start, end: now.toISOString(), min, count, money, inc };
+      policeHistory.push(rec);
+      localStorage.setItem('chispa_p_history', JSON.stringify(policeHistory));
+
+      if (policeWebhook) sendWebhook(policeWebhook, "Control Policial • Thiago Belmonte | 442", rec);
+
+      document.getElementById('incidents-input').value = "";
+      session = null;
+      localStorage.removeItem('chispa_session');
+    }
+    renderUI();
+    syncToGoogleCloud();
+  }
+
+  function updateTimer() {
+    let start = new Date(session.start);
+    let now = new Date();
+    let diff = Math.floor((now - start) / 1000);
+
+    let h = String(Math.floor(diff / 3600)).padStart(2, '0');
+    let m = String(Math.floor((diff % 3600) / 60)).padStart(2, '0');
+    let s = String(diff % 60).padStart(2, '0');
+
+    let { count, money } = calculatePay(start, now);
+
+    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+    document.getElementById('pay-display').innerText = count;
+    document.getElementById('money-display').innerText = `$${money.toLocaleString()}`;
+  }
+
+  function renderUI() {
+    let btn = document.getElementById('btn-toggle-patrol');
+    let badge = document.getElementById('status-badge');
+
+    if (session) {
+      btn.innerText = "■ Finalizar Servicio y Enviar a Discord";
+      btn.className = "btn btn-stop";
+      badge.innerText = "En Servicio";
+      badge.className = "badge badge-on";
+    } else {
+      btn.innerText = "▶ Iniciar Servicio";
+      btn.className = "btn";
+      badge.innerText = "Fuera de Servicio";
+      badge.className = "badge";
+      document.getElementById('timer-display').innerText = "00:00:00";
+      document.getElementById('pay-display').innerText = "0";
+      document.getElementById('money-display').innerText = "$0";
+    }
+    updatePoliceStats();
+  }
+
+  function updatePoliceStats() {
+    let thisWeekMin = 0, thisWeekMoney = 0, totalMin = 0;
+    policeHistory.forEach(i => {
+      totalMin += i.min;
+      thisWeekMin += i.min;
+      thisWeekMoney += i.money;
+    });
+
+    document.getElementById('st-week-time').innerText = `${Math.floor(thisWeekMin / 60)}h ${thisWeekMin % 60}m`;
+    document.getElementById('st-week-money').innerText = `$${thisWeekMoney.toLocaleString()}`;
+
+    let avg = policeHistory.length ? Math.round(totalMin / policeHistory.length) : 0;
+    document.getElementById('st-avg-session').innerText = `${Math.floor(avg / 60)}h ${avg % 60}m`;
+    document.getElementById('st-avg-weekly').innerText = `${Math.floor(thisWeekMin / 60)}h ${thisWeekMin % 60}m`;
+  }
+
+  function renderPoliceHistory() {
+    let container = document.getElementById('history-container');
+    if (!policeHistory.length) { container.innerHTML = "<p style='color:var(--text-muted); font-size:13px;'>Sin registros aún.</p>"; return; }
+
+    let html = "<table><tr><th>Fecha</th><th>Duración</th><th>Pagas</th><th>Incidencias</th><th style='text-align:right;'>Ganado</th></tr>";
+    policeHistory.slice().reverse().forEach(i => {
+      let d = new Date(i.start).toLocaleDateString();
+      html += `<tr><td>${d}</td><td>${Math.floor(i.min/60)}h ${i.min%60}m</td><td>${i.count}</td><td style="color:var(--text-muted); font-size:12px;">${i.inc}</td><td style="color:#34d399; text-align:right; font-weight:bold;">+$${i.money.toLocaleString()}</td></tr>`;
+    });
+    html += "</table>";
+    container.innerHTML = html;
+  }
+
+  function clearPoliceHistory() {
+    if (confirm("¿Borrar todo el historial policial?")) {
+      policeHistory = [];
+      localStorage.removeItem('chispa_p_history');
+      renderPoliceHistory();
+      updatePoliceStats();
+      syncToGoogleCloud();
+    }
+  }
+
+  function addCivilMovement() {
+    let type = document.getElementById('civil-type').value;
+    let amount = parseFloat(document.getElementById('civil-amount').value);
+    let desc = document.getElementById('civil-desc').value.trim();
+
+    if (isNaN(amount) || amount <= 0 || !desc) { alert("Ingresa una cantidad y concepto válidos."); return; }
+
+    let item = { date: new Date().toISOString(), type, amount, desc };
+    civilHistory.push(item);
+    localStorage.setItem('chispa_c_history', JSON.stringify(civilHistory));
+
+    if (civilWebhook) {
+      sendCivilMovementWebhook(civilWebhook, item);
+    }
+
+    document.getElementById('civil-amount').value = "";
+    document.getElementById('civil-desc').value = "";
+    renderCivilUI();
+    syncToGoogleCloud();
+  }
+
+  function renderCivilUI() {
+    let policeMoney = policeHistory.reduce((s, i) => s + i.money, 0);
+    let civilNet = civilHistory.reduce((s, i) => i.type === 'ingreso' ? s + i.amount : s - i.amount, 0);
+    let total = policeMoney + civilNet;
+
+    document.getElementById('civil-balance').innerText = `$${total.toLocaleString()}`;
+
+    let tbody = document.getElementById('civil-tbody');
+    if (!civilHistory.length) { tbody.innerHTML = "<tr><td colspan='4' style='color:var(--text-muted); font-size:13px;'>Sin movimientos.</td></tr>"; return; }
+
+    let html = "";
+    civilHistory.slice().reverse().forEach(i => {
+      let d = new Date(i.date).toLocaleDateString() + " " + new Date(i.date).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+      let isIng = i.type === 'ingreso';
+      html += `<tr><td style="color:var(--text-muted); font-size:12px;">${d}</td><td>${i.desc}</td><td style="color:${isIng?'#34d399':'#f87171'}; font-weight:bold;">${isIng?'INGRESO':'GASTO'}</td><td style="text-align:right; font-weight:bold; color:${isIng?'#34d399':'#f87171'};">${isIng?'+':'-'}$${i.amount.toLocaleString()}</td></tr>`;
+    });
+    tbody.innerHTML = html;
+  }
+
+  function clearCivilHistory() {
+    if (confirm("¿Borrar historial civil?")) {
+      civilHistory = [];
+      localStorage.removeItem('chispa_c_history');
+      renderCivilUI();
+      syncToGoogleCloud();
+    }
+  }
+
+  function saveWebhook(type) {
+    if (type === 'police') {
+      policeWebhook = document.getElementById('webhook-police').value.trim();
+      localStorage.setItem('chispa_p_webhook', policeWebhook);
+      alert('Webhook policial guardado.');
+    } else {
+      civilWebhook = document.getElementById('webhook-civil').value.trim();
+      localStorage.setItem('chispa_c_webhook', civilWebhook);
+      alert('Webhook civil guardado.');
+    }
+  }
+
+  function saveGoogleUrl() {
+    googleScriptUrl = document.getElementById('google-script-url').value.trim();
+    localStorage.setItem('chispa_g_script', googleScriptUrl);
+    alert('URL de Google Apps Script guardada.');
+    syncToGoogleCloud();
+  }
+
+  function syncToGoogleCloud() {
+    if (!googleScriptUrl) return;
+
+    let policeMoney = policeHistory.reduce((s, i) => s + i.money, 0);
+    let civilNet = civilHistory.reduce((s, i) => i.type === 'ingreso' ? s + i.amount : s - i.amount, 0);
+    let total = policeMoney + civilNet;
+
+    try {
+      fetch(googleScriptUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          balance: `$${total.toLocaleString()}`,
+          police: `$${policeMoney.toLocaleString()}`,
+          civil: `$${civilNet.toLocaleString()}`
+        })
+      });
+    } catch(e) {}
+  }
+
+  async function sendWebhook(url, title, item) {
+    let sDate = new Date(item.start);
+    let eDate = new Date(item.end);
+    let payload = {
+      username: "Control Policial • Thiago Belmonte | 442",
+      embeds: [{
+        title: "🚔 INFORME DE FINALIZACIÓN DE PATRULLA",
+        color: 3447003,
+        fields: [
+          { name: "👤 Agente", value: "`Thiago Belmonte | 442`", inline: true },
+          { name: "⏱️ Tiempo patrullado", value: "`" + Math.floor(item.min/60) + "h " + (item.min%60) + "m`", inline: true },
+          { name: "🕐 Horario", value: "`" + sDate.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) + "` ➔ `" + eDate.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) + "`", inline: true },
+          { name: "💰 Pagas recibidas", value: "`" + item.count + "` *($750 c/u)*", inline: true },
+          { name: "💵 Total ganado", value: "```yaml\n+$" + item.money.toLocaleString() + "\n```", inline: true },
+          { name: "📝 Incidencias del servicio", value: "```text\n" + item.inc + "\n```", inline: false }
+        ],
+        footer: { text: "Registro Policial Automático" },
+        timestamp: item.end
+      }]
+    };
+    fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+  }
+
+  async function sendCivilMovementWebhook(url, item) {
+    let isIng = item.type === 'ingreso';
+    let payload = {
+      username: "Registro Económico • Thiago Belmonte",
+      embeds: [{
+        title: isIng ? "🟢 REGISTRO DE INGRESO CIVIL" : "🔴 REGISTRO DE GASTO CIVIL",
+        color: isIng ? 3066993 : 15158332,
+        fields: [
+          { name: "👤 Usuario", value: "`Thiago Belmonte`", inline: true },
+          { name: "🏷️ Tipo", value: isIng ? "`INGRESO`" : "`GASTO`", inline: true },
+          { name: "💵 Monto", value: "```ansi\n" + (isIng ? "\u001b[1;32m+$" : "\u001b[1;31m-$") + item.amount.toLocaleString() + "\u001b[0m\n```", inline: false },
+          { name: "📝 Concepto", value: "> " + item.desc, inline: false }
+        ],
+        footer: { text: "Movimiento registrado desde el Terminal" },
+        timestamp: item.date
+      }]
+    };
+    fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+  }
+</script>
+
+</body>
+</html>
